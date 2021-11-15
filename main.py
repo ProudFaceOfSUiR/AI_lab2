@@ -1,15 +1,14 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import tf as tf
 from keras import layers
 from sklearn.model_selection import train_test_split
 
 train_data = pd.read_csv('train.csv')
 test_data = pd.read_csv('test.csv')
 
-train_data.head()
-test_data.head()
+print(train_data.head())  # just for understanding, what is happening
+print(test_data.head())
 
 
 def missing_value_checker(data):
@@ -30,8 +29,9 @@ def missing_value_checker(data):
 
 missing_value_checker(test_data)
 
-test_edited = test_data.drop(['Alley','FireplaceQu','PoolQC', 'Fence', 'MiscFeature'], axis=1)
-train_edited = train_data.drop(['Alley','FireplaceQu','PoolQC', 'Fence', 'MiscFeature'], axis=1)
+test_edited = test_data.drop(['Alley', 'FireplaceQu', 'PoolQC', 'Fence', 'MiscFeature'], axis=1)  # removing the titles
+train_edited = train_data.drop(['Alley', 'FireplaceQu', 'PoolQC', 'Fence', 'MiscFeature'], axis=1)
+
 
 def nan_filler(data):
     for label, content in data.items():
@@ -39,7 +39,8 @@ def nan_filler(data):
             data[label] = content.fillna(content.median())
         else:
             data[label] = content.astype("category").cat.as_ordered()
-            data[label] = pd.Categorical(content).codes+1
+            data[label] = pd.Categorical(content).codes + 1
+
 
 nan_filler(test_edited)
 nan_filler(train_edited)
@@ -48,7 +49,9 @@ missing_value_checker(test_edited)
 
 missing_value_checker(train_edited)
 
-train_edited.shape, test_edited.shape
+# train_edited.shape, test_edited.shape
+
+print("Here comes the info")
 
 test_edited.info()
 
@@ -57,41 +60,64 @@ train_edited.info()
 X = train_edited.drop('SalePrice', axis=1)
 y = train_edited['SalePrice']
 
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.2)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
 
-X_train.shape, test_edited.shape
+X_train.shape
+test_edited.shape
 
-from tensorflow import keras# или import torch
-import torch
 import tensorflow as tf
-model = keras.Sequential(layers.Dense(64, activation='relu'))
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Activation
+
+model = Sequential(Dense(32, input_dim=75), )
+#model.add(layers.Dense(64, activation='relu'))
+# Добавим другой слой:
+#model.add(layers.Dense(64, activation='relu'))
+# Добавим слой softmax с 10 выходами:
+#model.add(layers.Dense(10, activation='softmax'))
 # замените None на колличество входных полносвязных слоёв, колличество нейронов, колличество выходов
-#tf.random.set_seed(40) / torch.manual_seed(40)
-#Для обеспечения воспроизводимости результатов устанавливается функция seed
+#tf.random.set_seed(40) #/ torch.manual_seed(40) #Для обеспечения воспроизводимости результатов устанавливается функция seed
 
-model.compile(loss=['msle'], optimizer=tf.keras.optimizers.Adam(0.01), metrics=['mae'])
-#Для оценки потерь рекомендую использовать MSLE(MeanSquaredLogarithmicError), а также метрику MAE(Mean absolute error).
+model.compile(optimizer="rmsprop",  loss="MSLE", metrics=["mae"])
+model.summary()
+# Для оценки потерь рекомендую использовать MSLE(MeanSquaredLogarithmicError), а также метрику MAE(Mean absolute error).
 
-history = model.fit(X_train, y_train, None) #замените None на гиперпараметры вашей модели нейронной сети
+history = model.fit(X_train, y_train, epochs=500, batch_size=32)  # замените None на гиперпараметры вашей модели нейронной сети
 
+print("plot next")
 pd.DataFrame(history.history).plot()
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 print(history.history)
 
+#mport matplotlib.pyplot as plt
+plt.show()
+
 scores = model.evaluate(X_val, y_val, verbose=1)
 
 preds = model.predict(test_edited)
+
+
+print()
+
+print("here comes preds")
+
+print(preds)
+
 print(pd.DataFrame)
 output = pd.DataFrame(
-{
-    'Id':test_data['Id'],
-})
+    {
+        'Id': test_data['Id'],
+    })
 print(output)
-output = pd.DataFrame(
-{
-    'SalePrice': np.squeeze(preds)
-})
+output = pd.DataFrame(np.squeeze(preds))
 print(output)
-#output
-#print (output)
+
+pd.DataFrame(np.squeeze(preds)).plot()
+plt.ylabel('shit1')
+plt.xlabel('shit2')
+#mport matplotlib.pyplot as plt
+plt.show()
+# output
+# print (output)
