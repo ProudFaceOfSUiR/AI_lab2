@@ -70,12 +70,20 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 
-model = Sequential(Dense(32, input_dim=75), )
-#model.add(layers.Dense(64, activation='relu'))
+model = Sequential(Dense(1000, input_dim=75), )
+model.add(layers.Dense(1000, activation='relu'))
 # Добавим другой слой:
-#model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(1000, activation='relu'))
 # Добавим слой softmax с 10 выходами:
-#model.add(layers.Dense(10, activation='softmax'))
+model.add(layers.Dense(1000, activation='softplus'))
+model.add(layers.Dense(1000, activation='softplus'))
+model.add(layers.Dense(1000, activation='softplus'))
+model.add(layers.Dense(1000, activation='softplus'))
+model.add(layers.Dense(1000, activation='relu'))
+model.add(layers.Dense(1000, activation='relu'))
+model.add(layers.Dense(1000, activation='relu'))
+
+
 # замените None на колличество входных полносвязных слоёв, колличество нейронов, колличество выходов
 #tf.random.set_seed(40) #/ torch.manual_seed(40) #Для обеспечения воспроизводимости результатов устанавливается функция seed
 
@@ -83,7 +91,7 @@ model.compile(optimizer="rmsprop",  loss="MSLE", metrics=["mae"])
 model.summary()
 # Для оценки потерь рекомендую использовать MSLE(MeanSquaredLogarithmicError), а также метрику MAE(Mean absolute error).
 
-history = model.fit(X_train, y_train, epochs=500, batch_size=32)  # замените None на гиперпараметры вашей модели нейронной сети
+history = model.fit(X_train, y_train, epochs=1000, batch_size=32)  # замените None на гиперпараметры вашей модели нейронной сети
 
 print("plot next")
 pd.DataFrame(history.history).plot()
