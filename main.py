@@ -12,6 +12,11 @@ print(test_data.head())
 
 
 def missing_value_checker(data):
+    '''
+    validation of the data
+    :param data:
+    :return:
+    '''
     list = []
     for feature, content in data.items():
         if data[feature].isnull().values.any():
@@ -34,6 +39,11 @@ train_edited = train_data.drop(['Alley', 'FireplaceQu', 'PoolQC', 'Fence', 'Misc
 
 
 def nan_filler(data):
+    '''
+    also a filter
+    :param data:
+    :return:
+    '''
     for label, content in data.items():
         if pd.api.types.is_numeric_dtype(content):
             data[label] = content.fillna(content.median())
@@ -62,44 +72,41 @@ y = train_edited['SalePrice']
 
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
 
-X_train.shape
-test_edited.shape
 
-import tensorflow as tf
-import keras
 from keras.models import Sequential
-from keras.layers import Dense, Activation
-
-model = Sequential(Dense(1000, input_dim=75), )
-model.add(layers.Dense(1000, activation='relu'))
-# Добавим другой слой:
-model.add(layers.Dense(1000, activation='relu'))
-# Добавим слой softmax с 10 выходами:
-model.add(layers.Dense(1000, activation='softplus'))
-model.add(layers.Dense(1000, activation='softplus'))
-model.add(layers.Dense(1000, activation='softplus'))
-model.add(layers.Dense(1000, activation='softplus'))
-model.add(layers.Dense(1000, activation='relu'))
-model.add(layers.Dense(1000, activation='relu'))
-model.add(layers.Dense(1000, activation='relu'))
+from keras.layers import Dense
 
 
-# замените None на колличество входных полносвязных слоёв, колличество нейронов, колличество выходов
-#tf.random.set_seed(40) #/ torch.manual_seed(40) #Для обеспечения воспроизводимости результатов устанавливается функция seed
+
+model = Sequential(Dense(100, input_dim=75))
+model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(1))
+
+'''
+Все параметры подобраны эксперементально, в т. ч. функции активации
+'''
 
 model.compile(optimizer="rmsprop",  loss="MSLE", metrics=["mae"])
 model.summary()
-# Для оценки потерь рекомендую использовать MSLE(MeanSquaredLogarithmicError), а также метрику MAE(Mean absolute error).
 
-history = model.fit(X_train, y_train, epochs=1000, batch_size=32)  # замените None на гиперпараметры вашей модели нейронной сети
+
+history = model.fit(X_train, y_train, epochs=10, batch_size=10)
 
 print("plot next")
 pd.DataFrame(history.history).plot()
-plt.ylabel('accuracy')
+plt.ylabel('mid squared errors')
 plt.xlabel('epoch')
 print(history.history)
 
-#mport matplotlib.pyplot as plt
+
 plt.show()
 
 scores = model.evaluate(X_val, y_val, verbose=1)
@@ -113,19 +120,36 @@ print("here comes preds")
 
 print(preds)
 
+
+output = pd.DataFrame(
+{
+    'Id':test_data['Id'],
+    'SalePrice': np.squeeze(preds)
+})
+output
+print(output)
+
+'''
+Ниже идет вариант, чтобы строить график относительно цены, позволяет визуально сравнить результаты
+Особого практического смысла нет, т к нет ярко выраженной зависимости
+'''
+
+'''
 print(pd.DataFrame)
 output = pd.DataFrame(
-    {
-        'Id': test_data['Id'],
-    })
-print(output)
+{
+    'Id':test_data['Id'],
+    'SalePrice': np.squeeze(preds)
+})
+output
 output = pd.DataFrame(np.squeeze(preds))
 print(output)
 
 pd.DataFrame(np.squeeze(preds)).plot()
-plt.ylabel('shit1')
-plt.xlabel('shit2')
+plt.ylabel('Y')
+plt.xlabel('X')
 #mport matplotlib.pyplot as plt
 plt.show()
-# output
+#output
 # print (output)
+'''
