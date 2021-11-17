@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from keras import layers
 from sklearn.model_selection import train_test_split
+from keras.models import Sequential
+from keras.layers import Dense
 
 train_data = pd.read_csv('train.csv')
 test_data = pd.read_csv('test.csv')
@@ -73,10 +75,6 @@ y = train_edited['SalePrice']
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
 
 
-from keras.models import Sequential
-from keras.layers import Dense
-
-
 
 model = Sequential(Dense(100, input_dim=75))
 model.add(layers.Dense(100, activation='relu'))
@@ -97,7 +95,6 @@ model.add(layers.Dense(1))
 model.compile(optimizer="rmsprop",  loss="MSLE", metrics=["mae"])
 model.summary()
 
-
 history = model.fit(X_train, y_train, epochs=10, batch_size=10)
 
 print("plot next")
@@ -106,20 +103,15 @@ plt.ylabel('mid squared errors')
 plt.xlabel('epoch')
 print(history.history)
 
-
 plt.show()
 
 scores = model.evaluate(X_val, y_val, verbose=1)
 
 preds = model.predict(test_edited)
 
-
 print()
-
 print("here comes preds")
-
 print(preds)
-
 
 output = pd.DataFrame(
 {
