@@ -80,10 +80,10 @@ model = Sequential(Dense(100, input_dim=75))
 model.add(layers.Dense(100, activation='relu'))
 model.add(layers.Dense(100, activation='relu'))
 model.add(layers.Dense(100, activation='softplus'))
-#model.add(layers.Dense(100, activation='softplus'))
-#model.add(layers.Dense(100, activation='softplus'))
-#model.add(layers.Dense(100, activation='softplus'))
-#model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='softplus'))
+model.add(layers.Dense(100, activation='relu'))
 model.add(layers.Dense(100, activation='relu'))
 model.add(layers.Dense(100, activation='relu'))
 model.add(layers.Dense(1))
@@ -95,7 +95,7 @@ model.add(layers.Dense(1))
 model.compile(optimizer="rmsprop",  loss="MSLE", metrics=["mae"])
 model.summary()
 
-history = model.fit(X_train, y_train, epochs=10, batch_size=10)
+history = model.fit(X_train, y_train, epochs=10000, batch_size=10)
 history1 = history
 print("plot next")
 pd.DataFrame(history.history["loss"]).plot()
@@ -121,10 +121,10 @@ print(preds)
 
 output = pd.DataFrame(
 {
-    'Id':test_data['Id'],
+    'Id': test_data['Id'],
     'SalePrice': np.squeeze(preds)
 })
-output
+# output
 print(output)
 
 '''
